@@ -1,0 +1,50 @@
+ul.egmenu {
+	
+	height: 10px;
+	width: 100%;
+}
+
+ul.egmenu>li {
+	float: left;
+	position: relative;
+}
+
+ul.egmenu ul {
+	 background:#ffffff;
+	display : none;
+	position: absolute;
+	left: 0;
+	top: 100%;
+	display: none;
+}
+
+ul.egmenu a {
+	cursor: pointer;
+	display: block;
+	padding: 3px 20px;
+	clear: both;
+	font-weight: normal;
+	line-height: 20px;
+	color: #999;
+	white-space: nowrap;
+}
+
+ul.egmenu li {
+	list-style: none;
+}
+
+ul.egmenu li:hover {
+	background: #555;
+}
+
+ul.egmenu li:hover ul {
+	display: block;
+}
+
+.link {
+  text-decoration: underline;
+  border: none;
+  background: none;
+  color: blue;
+  cursor: pointer;
+}
