@@ -1,10 +1,31 @@
+
+
 <div class="span9" id="content">
+
 
 	<div class="row-fluid">
 		<!-- block -->
 
-		<button class="btn btn-primary"
-			onclick="window.location.href='/produtos/novo'">Novo</button>
+
+		<div class="block">
+			<div class="navbar navbar-inner block-header">
+				<div class="muted pull-left">Pesquisa</div>
+				<div class="block-content collapse in">
+					<div class="span12">
+						<form action="<c:url value="/produtos/busca"/>">
+							<input id="busca" name="nome" />
+						</form>
+
+
+
+						<button class="btn btn-primary"
+							onclick="window.location.href='/produtos/novo'">Novo</button>
+
+					</div>
+				</div>
+			</div>
+
+		</div>
 
 
 		<div class="block">
@@ -51,3 +72,29 @@
 	</div>
 </div>
 
+<script type="text/javascript">
+	$("#busca").puts("Busca produtos por nome ...");
+	
+	$("#busca").autocomplete('<c:url value="/produtos/busca.json"/>', {
+		dataType : "json", // pra falar que vamos tratar um json
+		parse : function(produtos) {
+			// para tratar o json
+			// a função map vai iterar por toda a lista, 
+			// e transformar os dados usando a função passada
+			return $.map(produtos, function(produto) {
+				return {
+					// todos os dados do produto
+					data : produto,
+					// o valor lógico do produto
+					value : produto.nome,
+					// o que vai aparecer ao selecionar
+					result : produto.nome
+				};
+			});
+		},
+		// o que vai aparecer na lista de autocomplete
+		formatItem : function(produto) {
+			return produto.nome + "(" + produto.preco + ")";
+		}
+	});
+</script>

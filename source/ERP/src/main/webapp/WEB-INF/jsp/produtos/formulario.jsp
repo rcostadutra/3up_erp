@@ -8,7 +8,7 @@
 			</div>
 
 
-			<form class="form-horizontal" action="<c:url value="/produtos"/>" method="POST">
+			<form id ="produtosForm" class="form-horizontal" action="<c:url value="/produtos"/>" method="POST">
 				<fieldset>
 					<div class="block-content collapse in">
 						<div class="span12">
@@ -24,17 +24,16 @@
 
 							<legend>Adicionar Produto</legend>
 
-							<label for="nome">Nome:</label> <input id="nome" type="text"
-								name="produto.nome" value="${produto.nome }" /> <label
-								for="descricao">Descrição:</label>
-							<textarea id="descricao" name="produto.descricao">
-      ${produto.descricao }
-    </textarea>
+							<label for="nome">Nome:</label> 
+							<input id="nome" minlength ="3" type="text" name="produto.nome" value="${produto.nome }" /> 
+							
+							<label for="descricao">Descrição:</label>
+							<textarea id="descricao" maxlength="40" name="produto.descricao">${produto.descricao }</textarea>
 
-							<label for="preco">Preço:</label> <input id="preco" type="text"
-								name="produto.preco" value="${produto.preco }" />
+							<label for="preco">Preço:</label> 
+							<input id="preco" type="text" min="0" name="produto.preco" value="${produto.preco }" />
 
-							<button type="submit">Enviar</button>
+							<button class="btn btn-primary" type="submit">Enviar</button>
 
 
 
@@ -46,3 +45,8 @@
 		</div>
 	</div>
 </div>
+
+<!-- Validando o Form -->
+<script type="text/javascript">
+  $('#produtosForm').validate();
+</script>

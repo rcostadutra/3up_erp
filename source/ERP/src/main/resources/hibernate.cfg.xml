@@ -26,5 +26,7 @@
 		<property name="format_sql">true</property>
 
 		<mapping class="br.com.threeup.model.Produto" />
+		<mapping class="br.com.threeup.model.Usuario" />
+		
 	</session-factory>
 </hibernate-configuration>

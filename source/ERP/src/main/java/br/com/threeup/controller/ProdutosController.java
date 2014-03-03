@@ -13,6 +13,8 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Delete;
 
+import static br.com.caelum.vraptor.view.Results.*;
+
 import br.com.threeup.dao.ProdutoDao;
 import br.com.threeup.model.Produto;
 
@@ -36,6 +38,11 @@ public class ProdutosController {
 	public List<Produto> lista() {
 
 		return dao.listaTudo();
+	}
+
+	public List<Produto> busca(String nome) {
+		result.include("nome", nome);
+		return dao.busca(nome);
 	}
 
 	@Post("/produtos")
@@ -72,5 +79,14 @@ public class ProdutosController {
 		Produto produto = dao.carrega(id);
 		dao.remove(produto);
 		result.redirectTo(this).lista();
+	}
+	
+	@Get ("/produtos/busca.json")
+	public void buscaJson(String q){
+		result.use(json())
+		.withoutRoot()
+		.from(dao.busca(q))
+		.exclude("id", "descricao")
+		.serialize();
 	}
 }

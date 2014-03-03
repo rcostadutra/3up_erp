@@ -7,6 +7,8 @@ import java.util.List;
 
 import org.hibernate.Session;
 import org.hibernate.Transaction;
+import org.hibernate.criterion.MatchMode;
+import org.hibernate.criterion.Restrictions;
 
 import br.com.caelum.vraptor.ioc.Component;
 import br.com.threeup.model.Produto;
@@ -55,4 +57,10 @@ public class ProdutoDao {
 		session.delete(produto);
 		tx.commit();
 	}
+
+	public List<Produto> busca(String nome) {
+	    return session.createCriteria(Produto.class)
+	      .add(Restrictions.ilike("nome", nome, MatchMode.ANYWHERE))
+	      .list();
+	  }    
 }

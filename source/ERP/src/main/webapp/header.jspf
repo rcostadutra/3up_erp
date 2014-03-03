@@ -16,6 +16,17 @@
 
 <script src="/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
 
+<!-- jquery Validate -->
+<script type="text/javascript" src="/javascripts/jquery-1.3.2.min.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.validate.min.js"></script>
+
+<!-- Texto  -->
+<script type="text/javascript" src="/javascripts/jquery.puts.js"></script>
+
+<!-- Autocomplete -->
+<script type="text/javascript"
+	src="/javascripts/jquery.autocomplete.min.js"></script>
+
 
 </head>
 
@@ -46,6 +57,17 @@
 								<li class="divider"></li>
 								<li><a tabindex="-1" href="login.html">Sair</a></li>
 							</ul></li>
+
+						
+								<!--li id="usuario"><c:if test="${usuarioWeb.logado}">
+      Olá, ${usuarioWeb.nome }! 
+      <a href="<c:url value="/logout"/>">Logout</a>
+									</c:if> <c:if test="${empty usuarioWeb or not usuarioWeb.logado}">
+      Você não está logado. 
+      <a href="<c:url value="/login"/>">Login</a>
+										<a href="<c:url value="/usuarios/novo"/>">Cadastre-se</a>
+									</c:if></li-->
+							
 					</ul>
 					<ul class="egmenu">
 						<li "class="has-sub"><a href="<c:url value="/"/>">Home</a></li>
@@ -75,9 +97,11 @@
 						<li class=""><a href="#">Ord. Serviço</a></li>
 						<li class=""><a href="#">Fiscal</a></li>
 						<li class=""><a href="#">Relatórios</a></li>
-						<li class=""><a href="#">Conf. Sistema</a></li>
-
-
+						<li class="has-sub"><a href="#">Conf. Sistema</a>
+							
+							
+							
+							</li>
 
 					</ul>
 
@@ -127,5 +151,6 @@
 							</ul>
 						</div></li>
 				</ul>
+
 			</div>
 			<!--/span-->
