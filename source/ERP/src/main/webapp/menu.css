@@ -1,5 +1,4 @@
 ul.egmenu {
-	
 	height: 10px;
 	width: 100%;
 }
@@ -10,8 +9,8 @@ ul.egmenu>li {
 }
 
 ul.egmenu ul {
-	 background:#ffffff;
-	display : none;
+	background: #ffffff;
+	display: none;
 	position: absolute;
 	left: 0;
 	top: 100%;
@@ -42,9 +41,19 @@ ul.egmenu li:hover ul {
 }
 
 .link {
-  text-decoration: underline;
-  border: none;
-  background: none;
-  color: blue;
-  cursor: pointer;
+	text-decoration: underline;
+	border: none;
+	background: none;
+	color: blue;
+	cursor: pointer;
+}
+
+.button-grid {
+	position: relative;
+	top: 5px;
+	width: 90px;
+	height: 30px;
+	top: 5px;
+	font-size: 18px;
+	float: right;
 }

@@ -12,21 +12,22 @@
 <link href="/assets/DT_bootstrap.css" rel="stylesheet" media="screen">
 <link href="/jstree/themes/default/style.css" rel="stylesheet"
 	media="screen">
+
 <link href="/menu.css" rel="stylesheet" media="screen">
 
-<script src="/vendors/modernizr-2.6.2-respond-1.1.0.min.js"></script>
+<script type="text/javascript" src="/vendors/jquery-1.9.1.js"></script>
+<script type="text/javascript" src="/vendors/modernizr-2.6.2-respond-1.1.0.js"></script>
 
 <!-- jquery Validate -->
-<script type="text/javascript" src="/javascripts/jquery-1.3.2.min.js"></script>
-<script type="text/javascript" src="/javascripts/jquery.validate.min.js"></script>
+
+<!-- <script type="text/javascript" src="/javascripts/jquery.validate.js"></script> -->
 
 <!-- Texto  -->
-<script type="text/javascript" src="/javascripts/jquery.puts.js"></script>
+<!-- <script type="text/javascript" src="/javascripts/jquery.puts.js"></script> -->
 
 <!-- Autocomplete -->
-<script type="text/javascript"
-	src="/javascripts/jquery.autocomplete.min.js"></script>
 
+<!-- <script type="text/javascript" src="/javascripts/jquery.autocomplete.js"></script> -->
 
 </head>
 
@@ -69,11 +70,11 @@
 									</c:if></li-->
 							
 					</ul>
-					<ul class="egmenu">
-						<li "class="has-sub"><a href="<c:url value="/"/>">Home</a></li>
-						<li class="has-sub"><a href="#">Comercial</a>
+					<ul class="nav">
+						<li class="active"><a href="<c:url value="/"/>">Home</a></li>
+						<li class="dropdown"><a href="#" data-toggle="dropdown" class="dropdown-toggle" >Comercial <b class="caret"></b></a>
 
-							<ul>
+							<ul class="dropdown-menu" id="menu1">
 								<li><a href="#">Nova OP</a></li>
 								<li><a href="#">Agenda</a></li>
 								<li><a href="#">Orçamentos</a></li>

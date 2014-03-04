@@ -1,351 +1,387 @@
+/**
+ * Extending jQuery with autocomplete
+ * Version: 1.0
+ */
 (function($) {
 
-    /**
-     * autor: CTAPbIu_MABP
-     * email: ctapbiumabp@gmail.com
-     * site: http://mabp.kiev.ua/content/2008/04/08/autocomplete/
-     * license: MIT & GPL
-     * last update: 14.09.2009
-     * version: 1.3
-     */
+ var RETURN = 13;
+ var TAB = 9;
+ var ESC = 27;
+ var ARRUP = 38;
+ var ARRDN = 40;
 
-    var ac = function(c, o) {
-        this.cache = {}; // main chache {mask:[text]}
-        this.store = {}; // secondary cache {mask:strind}
-        this.pairs = {}; // cache of values {text:value}
-        this.init(c, o);
-    };
+function getCaretPosition(obj){
+  var start = -1;
+  var end = -1;
+  if(typeof obj.selectionStart != "undefined"){
+    start = obj.selectionStart;
+    end = obj.selectionEnd;
+  }
+  else if(document.selection&&document.selection.createRange){
+    var M=document.selection.createRange();
+    var Lp;
+    try{
+      Lp = M.duplicate();
+      Lp.moveToElementText(obj);
+    }catch(e){
+      Lp=obj.createTextRange();
+    }
+    Lp.setEndPoint("EndToStart",M);
+    start=Lp.text.length;
+    if(start>obj.value.length)
+      start = -1;
+    
+    Lp.setEndPoint("EndToStart",M);
+    end=Lp.text.length;
+    if(end>obj.value.length)
+      end = -1;
+  }
+  return {'start':start,'end':end};
+}
+function setCaret(obj,l){
+  obj.focus();
+  if (obj.setSelectionRange){
+    obj.setSelectionRange(l,l);
+  }
+  else if(obj.createTextRange){
+    m = obj.createTextRange();      
+    m.moveStart('character',l);
+    m.collapse();
+    m.select();
+  }
+}
 
-    ac.prototype = {
+$.fn.autocomplete =
+  function(options){
+    if(!options && (!$.isFunction(options.get) || !options.ajax_get)){
+       return $(this);
+    }
+    // options
+    options = $.extend({ 
+                         delay     : 500 ,
+                         timeout   : 5000 ,
+                         minchars  : 3 ,
+                         multi     : false ,
+                         cache     : true , 
+                         height    : 150 ,
+                         noresults : 'No results'
+                         },
+                       options);
+    // take me
+    var me = $(this);
+    var me_this = $(this).get(0);
+    // bind key events
+    me.keypress(function(ev){
+      var key = ev.which;
+      switch(key){
+        case RETURN:
+          if(!current_highlight) getSuggestions(getUserInput());
+          else setHighlightedValue();
+          return false;
+        case ESC:
+          clearSuggestions();
+          return false;
+      }
+      return true;
+    });
+    
+    me.keyup(function(ev){
+      var key = ev.which;
+      // set responses to keydown events in the field
+      // this allows the user to use the arrow keys to scroll through the results
+      switch(key){
+        case ESC: case RETURN: return false;
+        case ARRUP:
+          changeHighlight(key);
+          return false;
+        case ARRDN:
+          changeHighlight(key);
+          return false;
+        default:
+          getSuggestions(getUserInput());
+      }
+      return true;
+    });
 
-        // html elements
-        ac : null, // main input
-        ul : null, // autocomplete list
-        img : null, // image
-        container : null, // outer div
+    // no autocomplete!
+    me.attr("autocomplete","off");
 
-        // timeouts
-        close : null, // ac hide
-        timeout : null, // ac search
+    // init variables
+    var user_input = "";
+    var input_chars_size  = 0;
+    var suggestions = [];
+    var current_highlight = 0;
+    var suggestions_menu = null;
+    var suggestions_list = null;
+    var clearSuggestionsTimer = false;
+    var ajaxTimer = false;
 
-        // system definitons
-        chars : 0, // previous search string lenght
-
-        // user definitons
-        url : null, // url for ajax request
-        source : null, // <select/>, [], {} jQuery
-        minchar : 0, // minchars
-        delay : 50, // for search
-        fillin : false, // pre fill-in
-        type : 'xml', // ajax data type
-        width : 200, // width
-        top : false, // position top/bottom
-        writable : true, // writeable/selectable
-        values : false, // store values
-        partial : false,
-
-        // events, please use 'self' instead of 'this'
-        onSelect : function () {
-        },
-        onSetup : function () {
-        },
-        onKeyPress : function () {
-        },
-        onSuggest : function () {
-        },
-        onError : function () {
-        },
-        onSuccess : function () {
-        },
-        onDisplay : function () {
-        },
-
-        init : function (ac, options) {
-            var self = $.extend(this, options);
-
-            self.container = $('<div/>')
-                .css({width:self.width})
-                .addClass('ac_conteiner')
-                .insertBefore(ac);
-            self.ac = $(ac)
-                .attr({autocomplete:'off'})
-                .blur(function() {
-                    clearTimeout(self.close);
-                    self.close = setTimeout(function() {
-                        self.ul.hide();
-                    }, 300);
-                }) // IE bug self.ul[.hide()] = undefined
-                .css({width:self.width-22}) // 18 img + 2 margin + 2 border
-                .addClass('ac_input')
-                .appendTo(self.container);
-            self.img = $('<div/>')
-                .click(function() {
-                    clearTimeout(self.close);
-                    self.scroll();
-                    self.ul.toggle();
-                    self.ac.focus();
-                })
-                .addClass('ac_img')
-                .appendTo(self.container);
-            self.ul = $('<div/>')
-                .addClass('ac_results')
-                .appendTo(self.container)
-                .click(function() {
-                    self.select();
-                    self.ac.focus();
-                }).mousedown(function() {
-                    setTimeout(function() {
-	                clearTimeout(self.close);
-	                self.ac.focus();
-                    }, 50); // IE scroll bug
-	        });
-
-            $(window).bind('resize load', function() {
-                var c = self.container;
-                self.ul.css({
-                    width:self.width,
-                    top:(   self.top ?
-                            c.offset().top - self.ul.height() - parseInt(c.css('border-top-width')) :
-                            c.offset().top + c.height() + parseInt(c.css('border-bottom-width')) ),
-                    left:(c.offset().left + parseInt(c.css('border-left-width')))
-                });
-            });
-
-            if ($.browser.mozilla)
-                self.ac.bind('keypress', self, self.process);
-            else
-                self.ac.bind('keydown', self, self.process);
-
-            self.onSetup.apply(self,arguments);
-
-            if (self.fillin)
-                self.suggest('hide');
-        },
-
-        process : function (e) {
-            var self = e.data, len = self.ac.val().length;
-            self.onKeyPress.apply(self,arguments);
-
-            if (/^(27|38|40|13|9)$/.test(e.keyCode) && self.ul.is(':visible')) {
-                switch (e.keyCode) {
-                    case 27: // escape
-                        self.ul.hide();
-                        break;
-                    case 38: // up
-                        self.prev();
-                        break;
-                    case 40: // down
-                        self.next();
-                        break;
-                    case 13: // return
-                    	e.preventDefault();
-                    case 9:  // tab
-                        self.select();
-                        break;
-                }
-            } else if (!/^9$/.test(e.keyCode) && (len != self.chars || !len)) {
-                self.chars = len;
-                if (self.timeout)
-                    clearTimeout(self.timeout);
-                self.timeout = setTimeout(function() {
-                    self.suggest('show');
-                }, self.delay);
-            }
-        },
-
-        get : function() {
-            var self = this;
-            return self.ul.children('.ac_over');
-        },
-
-        prev : function () {
-            var self = this, current = self.get(), prev = current.prev();
-            if (current.length) {
-                current.removeClass('ac_over');
-                if (prev.length)
-                    prev.addClass('ac_over');
-                }
-            if (!current.length || !prev.length){
-                self.ul.children(':last').addClass('ac_over');
-            }
-            self.scroll();
-        },
-
-        next : function () {
-            var self = this, current = self.get(), next = current.next();
-            if (current.length) {
-                current.removeClass('ac_over');
-                if (next.length)
-                    next.addClass('ac_over');
-            }
-            if (!current.length || !next.length)
-                self.ul.children(':first').addClass('ac_over');
-            self.scroll();
-        },
-
-        scroll : function(){
-            var self = this, current = self.get();
-            if (!current.length)
-                return; // quick return
-            var el = current.get(0), list = self.ul.get(0); // dont scroll after click on document :(
-            if(el.offsetTop + el.offsetHeight > list.scrollTop + list.clientHeight)
-                list.scrollTop = el.offsetTop + el.offsetHeight - list.clientHeight;
-            else if(el.offsetTop < list.scrollTop)
-                list.scrollTop = el.offsetTop;
-        },
-
-        select : function () {
-            var self = this, current = self.get();
-            if (current) {
-                self.ac.val(current.text());
-                self.ul.hide();
-                self.onSelect.apply(self,arguments);
-            }
-        },
-
-        suggest : function (show) {
-            var self = this, mask = $.trim(self.ac.val());
-            self.ul.hide();
-            
-            if (mask.length >= self.minchar) {
-                self.onSuggest.apply(self,arguments);
-                if (self.check(mask) && !$.isFunction(self.url))
-                    self.prepare(self.grab(mask),mask)[show]();
-                else if (self.url) // use ajax
-                    $.ajax({type: "GET", data:{mask:mask},
-                        url:$.isFunction(self.url)?self.url(self):self.url,
-                        success:function(xml) {
-                            self.onSuccess.apply(self,arguments);
-                            self.prepare(xml,mask)[show]();
-                        },
-                        error:function(){
-                            self.onError.apply(self,arguments);
-                        },
-                        dataType:self.type
-                    });
-                else if (self.source) // use source
-                    self.prepare(self.source,mask)[show]();
-            }else{
-                self.ul.empty();
-            }
-        },
-
-        check: function (mask){
-            var self = this;
-            if (self.cache[mask])
-                return true; // quick return
-            if(self.partial)
-                return false;
-            mask = mask.toLowerCase();
-            for(var it in self.cache)
-                if (it && !mask.indexOf(it.toLowerCase()))
-                    return true;
+    // get user input
+    function getUserInput(){
+      var val = me.val();
+      if(options.multi){
+        var pos = getCaretPosition(me_this);
+        var start = pos.start;
+        for(;start>0 && val.charAt(start-1) != ',';start--){}
+        var end = pos.start;
+        for(;end<val.length && val.charAt(end) != ',';end++){}
+        var val = val.substr(start,pos.start-start);
+        $('#info').text("start "+start+" end "+end+" pos "+pos.start+" "+val);
+      }
+      return val;
+    }
+    // set suggestion
+    function setSuggestion(val){
+      user_input = val;
+      if(options.multi){
+        var orig = me.val();
+        var pos = getCaretPosition(me_this);
+        var start = pos.start;
+        for(;start>0 && orig.charAt(start-1) != ',';start--){}
+        var end = pos.start;
+        for(;end<orig.length && orig.charAt(end) != ',';end++){}
+        var new_val = orig.substr(0,start) + val + orig.substr(end);
+        me.val(new_val);
+        $('#info').text("set "+(start+val.length));
+        setCaret(me_this,start+val.length);
+      }
+      else{
+        me_this.focus();
+        me.val(val);
+      }
+    }
+    // get suggestions
+    function getSuggestions(val){
+        if (val == user_input) return false;
+        // input length is less than the min required to trigger a request
+        // reset input string
+        // do nothing
+        if (val.length < options.minchars){
+            clearSuggestions();
+            user_input = false;
             return false;
-        },
-
-        grab: function (mask){
-            var self = this, map = [], array = [];
-            if (self.cache[mask])
-                return self.cache[mask]; // quick return
-            for(var it in self.cache)
-                array.push(it);
-            array = array.reverse();
-            mask = mask.toLowerCase();
-            for(var item in array)
-                if(!mask.indexOf(array[item].toLowerCase())){
-                    for(var word in self.cache[array[item]])
-                        if (!self.cache[array[item]][word].toLowerCase().indexOf(mask))
-                            map.push(self.cache[array[item]][word]);
-                    break;
-                }
-            return map;
-        },
-
-        prepare : function(xml, mask){
-            var self = this, select = $(xml);
-            self.store[mask] = '';
-            self.cache[mask] = [];
-            if (!self.store[mask]){
-                if(select.context) // use selectbox or ajax result
-                    select.find("option").each(function(i, n) {
-                        var t = $(n).text();
-                        self.cache[mask].push(t);
-                        self.store[mask] += self.mark(t,mask);
-                        if(self.values && !self.pairs[t]){
-                            self.pairs[t] = $(n).attr("value");
-                        }
-                    });
-                else // use array or array-like object
-                    $.each(xml, self.dataHandler(mask));
+        }
+        // if caching enabled, and user is typing (ie. length of input is increasing)
+        // filter results out of suggestions from last request
+        if (val.length > input_chars_size && suggestions.length && options.cache){
+            var arr = [];
+            for (var i=0;i<suggestions.length;i++){
+                if(suggestions[i].value.substr(0,val.length).toLowerCase() == val.toLowerCase())
+                    arr.push( suggestions[i] );
             }
 
-            if (!self.writable && !self.cache[mask].length){
-                setTimeout(function(){
-                    var val = self.ac.val();
-                    self.ac.val(val.substring(0, val.length-1));
-                    self.chars--;
-                },50);
-                return self.ul;
+            user_input = val;
+            input_chars_size = val.length;
+            suggestions = arr;
+            createList(suggestions);
+            return false;
+        }
+        else{
+            // do new request
+            user_input = val;
+            input_chars_size = val.length;
+            clearTimeout(ajaxTimer);
+            ajaxTimer = setTimeout( 
+                function(){ 
+                  //try{
+                  suggestions = [];
+                  // call pre callback, if exists
+                  if($.isFunction(options.pre_callback))
+                      options.pre_callback();
+                  // call get
+                  if($.isFunction(options.get)){
+                    var jsondata = options.get(val);
+                    for(var i=0;i<jsondata.length;i++){
+                       suggestions.push(jsondata[i]);
+                    }
+                    createList(suggestions);
+                  }
+                  if($.isFunction(options.ajax_get)){
+                     options.ajax_get(val,function(jsondata){
+                       for(var i=0;i<jsondata.length;i++){
+                         suggestions.push(jsondata[i]);
+                       }
+                       createList(suggestions);
+                     });
+                  }
+                  
+                //}catch(e){
+                //   alert('Error when AJAX call: '+e);
+                //}
+              },
+              options.delay );
+        }
+        return false;
+    };
+    // create suggestions list
+    function createList(arr){
+        // get rid of old list
+        // and clear the list removal timeout
+        if(suggestions_menu) $(suggestions_menu).remove();
+        killTimeout();
+	
+	// create holding div
+	suggestions_menu = $('<div class="jqac-menu"></div>').get(0);
+	
+	// ovveride some necessary CSS properties 
+	$(suggestions_menu).css('position','absolute');
+	$(suggestions_menu).css('max-height',options.height+'px');
+	$(suggestions_menu).css('overflow-y','auto');
+	
+	// create and populate ul
+	suggestions_list = $('<ul></ul>').get(0);
+	
+	// loop throught arr of suggestions
+	// creating an LI element for each suggestion
+	for (var i=0;i<arr.length;i++){
+            // format output with the input enclosed in a EM element
+            // (as HTML, not DOM)
+            var val = new String(arr[i].value);
+            // using RE
+            var re = new RegExp("("+user_input+")",'ig');
+            var output = val.replace(re,'<em>$1</em>');
+            // using substr
+            //var st = val.toLowerCase().indexOf( user_input.toLowerCase() );
+            //var len = user_input.length;
+            //var output = val.substring(0,st)+"<em>"+val.substring(st,st+len)+"</em>"+val.substring(st+len);
+
+            var span = $('<span class="jqac-link">'+output+'</span>').get(0);
+            if (arr[i].info != ""){
+                $(span).append($('<div class="jqac-info">'+arr[i].info+'</div>'));
             }
-            return self.display(self.store[mask]);
-        },
-        
-        dataHandler : function(mask){
-            var self = this;
-            return function(i, n) {
-                self.cache[mask].push(n);
-                self.store[mask] += self.mark(n,mask);
-                if(self.values && !self.pairs[n])
-                    self.pairs[n] = i;
-                };
-        },
 
-        mark : function(text, mask){
-            return new RegExp('^' + mask, 'ig').test(text) ?
-                '<div>' + text.replace(new RegExp('^' + mask, 'ig'), function(mask) {
-                    return '<span class="ac_match">' + mask + '</span>';
-                }) + '</div>' : '';
-        },
+            $(span).attr('name',i+1);
+            $(span).click(function () { setHighlightedValue(); });
+            $(span).mouseover(function () { setHighlight($(this).attr('name')); });
 
-        display : function (list) {
-            var self = this;
-            self.onDisplay.apply(self,arguments);
-            if (!list)
-                return self.ul.empty().end().end(); // fake
-            return self.ul.html(list).children('div').mouseover(function() {
-                    $(this).siblings().removeClass('ac_over').end().addClass('ac_over');
-                }).eq(0).addClass('ac_over').end().end(); // ul
+            var li = $('<li></li>').get(0);
+            $(li).append(span);
+
+            $(suggestions_list).append(li);
+        }
+
+
+        // no results
+        //
+        if (arr.length == 0){
+            $(suggestions_list).append('<li class="jqac-warning">'+options.noresults+'</li>');
+        }
+
+        $(suggestions_menu).append(suggestions_list);
+
+	// get position of target textfield
+	// position holding div below it
+	// set width of holding div to width of field
+	var pos = me.offset();
+	
+	$(suggestions_menu).css('left', pos.left + "px");
+    $(suggestions_menu).css('top', ( pos.top + me.height() + 2 ) + "px");
+    $(suggestions_menu).width(me.width());
+	
+	// set mouseover functions for div
+	// when mouse pointer leaves div, set a timeout to remove the list after an interval
+	// when mouse enters div, kill the timeout so the list won't be removed
+	$(suggestions_menu).mouseover(function(){ killTimeout() });
+	$(suggestions_menu).mouseout(function(){ resetTimeout() });
+	$(suggestions_menu).ready(function(){ 
+      
+    });
+
+	// add DIV to document
+	$('body').append(suggestions_menu);
+	
+	// adjust height
+	if($(suggestions_menu).height() > options.height){
+       $(suggestions_menu).height(options.height);
+    }
+	
+	// currently no item is highlighted
+	current_highlight = 0;
+	
+	// remove list after an interval
+	clearSuggestionsTimer = setTimeout(function () { clearSuggestions() }, options.timeout);
+    };
+    // set highlighted value
+    function setHighlightedValue(){
+        if(current_highlight && suggestions[current_highlight-1]){
+            setSuggestion(suggestions[ current_highlight-1 ].value);
+            // pass selected object to callback function, if exists
+            if ($.isFunction(options.callback))
+              options.callback( suggestions[current_highlight-1] );
+
+            clearSuggestions();
         }
     };
+    // change highlight according to key
+    function changeHighlight(key){	
+        if(!suggestions_list) return false;
+        var n;
+        if (key == ARRDN)
+            n = current_highlight + 1;
+        else if (key == ARRUP)
+            n = current_highlight - 1;
 
-    $.fn.autocomplete = function(options) {
-        this.each(function() {
-            if (this.tagName == 'SELECT' && !this.multiple) {
-                var select = $(this),
-                    input = $("<input type='text'/>")
-                        .addClass(select.attr('class'))
-                        .attr('tabindex', select.attr('tabindex'))
-                	.attr('id', 'ac_' + select.attr('id'));
-                	
-                select.after(input).hide(); // add text input and hide the select
-                
-                $("label[for='"+select.attr('id')+"']")
-                    .attr('for', 'ac_' + select.attr('id'));
-                
-                new ac(input, $.extend({
-                    source: this,
-                    values: true,
-                    fillin: true,
-                    writable : false,
-                    onSelect: function() {
-                        select.val(this.pairs[this.ac.val()]);
-                    }
-                }, options));
-            } else if (this.tagName == 'INPUT'){
-                new ac(this, options);
-            }
-        });
-        return this;
+        if (n > $(suggestions_list).children().size())
+            n = 1;
+        if (n < 1)
+            n = $(suggestions_list).children().size();
+        setHighlight(n);
     };
+    // change highlight
+    function setHighlight(n){
+        if (!suggestions_list) return false;
+        if (current_highlight > 0) clearHighlight();
+        current_highlight = Number(n);
+        var li = $(suggestions_list).children().get(current_highlight-1);
+        li.className = 'jqac-highlight';
+        adjustScroll(li);
+        killTimeout();
+    };
+    // clear highlight
+    function clearHighlight(){
+        if (!suggestions_list)return false;
+        if (current_highlight > 0){
+            $(suggestions_list).children().get(current_highlight-1).className = '';
+            current_highlight = 0;
+        }
+    };
+    // clear suggestions list
+    function clearSuggestions(){
+        killTimeout();
+        if (suggestions_menu){
+          $(suggestions_menu).remove();
+          suggestions_menu = null;
+          current_highlight = 0;
+          user_input = false;
+        }
+    };
+    // set scroll
+    function adjustScroll(el){
+      if(!suggestions_menu) return false;
+      var viewportHeight = suggestions_menu.clientHeight;        
+      var wholeHeight = suggestions_menu.scrollHeight;
+      var scrolled = suggestions_menu.scrollTop;
+      var elTop = el.offsetTop;
+      var elBottom = elTop + el.offsetHeight
+      if(elBottom > scrolled + viewportHeight){
+        suggestions_menu.scrollTop = elBottom - viewportHeight;
+      }
+      else if(elTop < scrolled){
+        suggestions_menu.scrollTop = elTop;
+      }
+      return true; 
+    }
+    // timeout funcs
+    function killTimeout(){
+        clearTimeout(clearSuggestionsTimer);
+    };
+    function resetTimeout(){
+        clearTimeout(clearSuggestionsTimer);
+        clearSuggestionsTimer = setTimeout(function () { clearSuggestions() }, 1000);
+    };
+  
+    return $(this);
 
-})(jQuery);
+  };
+
+})($);
