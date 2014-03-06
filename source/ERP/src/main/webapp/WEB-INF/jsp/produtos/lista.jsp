@@ -12,13 +12,18 @@
 			<div class="block-content collapse in">
 				<div class="span12">
 					<table cellpadding="0" cellspacing="0" border="0"
-						class="table table-striped table-bordered" id="example">
+						class="table table-striped table-bordered" id="example2">
 						<thead>
 							<tr>
-
 								<th>Nome</th>
+								<td>Cod. Barra</td>
 								<th>Descrição</th>
-								<th>Preço</th>
+								<td>Preço</td>
+								<td>Custo</td>
+								<td>Custo Medio</td>
+								<td>Preco Medio</td>
+								<td>Margem Lucro</td>
+								
 								<th>Editar</th>
 								<th>Remover</th>
 
@@ -28,8 +33,16 @@
 							<c:forEach items="${produtoList}" var="produto">
 								<tr>
 									<td>${produto.nome }</td>
+									<td>${produto.cod_barra }</td>
 									<td>${produto.descricao }</td>
 									<td>${produto.preco }</td>
+									<td>${produto.custo }</td>
+									<td>${produto.custo_medio }</td>
+									<td>${produto.preco_venda }</td>
+									<td>${produto.margem_lucro }</td>
+
+
+
 									<td><a href="<c:url value="/produtos/${produto.id}"/>">Editar</a></td>
 									<td>
 										<form action="<c:url value="/produtos/${produto.id}"/>"

@@ -8,7 +8,7 @@
 			root
 		</property>
 		<property name="hibernate.connection.password">
-			iniciar
+			1234
 		</property>
 		<property name="hibernate.connection.url">
 			jdbc:mysql://localhost/fj28
@@ -27,6 +27,9 @@
 
 		<mapping class="br.com.threeup.model.Produto" />
 		<mapping class="br.com.threeup.model.Usuario" />
+		<mapping class="br.com.threeup.model.Cliente" />
+		<mapping class="br.com.threeup.model.Parceiro" />
+		<mapping class="br.com.threeup.model.Fornecedor" />
 		
 	</session-factory>
 </hibernate-configuration>

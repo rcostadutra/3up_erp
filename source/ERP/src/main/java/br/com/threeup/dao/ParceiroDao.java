@@ -12,7 +12,7 @@ import org.hibernate.criterion.MatchMode;
 import org.hibernate.criterion.Restrictions;
 
 import br.com.caelum.vraptor.ioc.Component;
-import br.com.threeup.model.Produto;
+import br.com.threeup.model.Parceiro;
 
 
 /**
@@ -20,65 +20,65 @@ import br.com.threeup.model.Produto;
  */
 @Component
 @SuppressWarnings( "unchecked" )
-public class ProdutoDao {
+public class ParceiroDao {
 
     private final Session session;
 
 
-    public ProdutoDao( Session session ) {
+    public ParceiroDao( Session session ) {
 
         this.session = session;
 
     }
 
 
-    public void salva( Produto produto ) {
+    public void salva( Parceiro parceiro ) {
 
         Transaction tx = session.beginTransaction();
-        session.save( produto );
+        session.save( parceiro );
         tx.commit();
     }
 
 
-    public void update( Produto produto ) {
+    public void update( Parceiro parceiro ) {
 
         Transaction tx = session.beginTransaction();
-        session.update( produto );
+        session.update( parceiro );
         tx.commit();
     }
 
 
-    public List< Produto > listaTudo() {
+    public List< Parceiro > listaTudo() {
 
-        return this.session.createCriteria( Produto.class ).list();
+        return this.session.createCriteria( Parceiro.class ).list();
     }
 
 
-    public Produto carrega( Long id ) {
+    public Parceiro carrega( Long id ) {
 
-        return (Produto) this.session.load( Produto.class, id );
+        return (Parceiro) this.session.load( Parceiro.class, id );
     }
 
 
-    public void atualiza( Produto produto ) {
+    public void atualiza( Parceiro parceiro ) {
 
         Transaction tx = session.beginTransaction();
-        this.session.update( produto );
+        this.session.update( parceiro );
         tx.commit();
     }
 
 
-    public void remove( Produto produto ) {
+    public void remove( Parceiro parceiro ) {
 
         Transaction tx = session.beginTransaction();
-        session.delete( produto );
+        session.delete( parceiro );
         tx.commit();
     }
 
 
-    public List< Produto > busca( String nome ) {
+    public List< Parceiro > busca( String nome ) {
 
-        return session.createCriteria( Produto.class ).add( Restrictions.ilike( "nome", nome, MatchMode.ANYWHERE ) )
+        return session.createCriteria( Parceiro.class ).add( Restrictions.ilike( "nome", nome, MatchMode.ANYWHERE ) )
             .list();
     }
 }

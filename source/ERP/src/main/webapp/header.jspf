@@ -2,7 +2,7 @@
 <%@taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <html>
 <head>
-<title>UP ERP - Gestão Empresarial</title>
+<title>UP ERP - Gestï¿½o Empresarial</title>
 <!-- Bootstrap -->
 <link href="/bootstrap/css/bootstrap.min.css" rel="stylesheet"
 	media="screen">
@@ -17,6 +17,7 @@
 
 <script type="text/javascript" src="/vendors/jquery-1.9.1.js"></script>
 <script type="text/javascript" src="/vendors/modernizr-2.6.2-respond-1.1.0.js"></script>
+<script type="text/javascript" src="/javascripts/jquery.mask.js"></script>
 
 <!-- jquery Validate -->
 
@@ -61,10 +62,10 @@
 
 						
 								<!--li id="usuario"><c:if test="${usuarioWeb.logado}">
-      Olá, ${usuarioWeb.nome }! 
+      Olï¿½, ${usuarioWeb.nome }! 
       <a href="<c:url value="/logout"/>">Logout</a>
 									</c:if> <c:if test="${empty usuarioWeb or not usuarioWeb.logado}">
-      Você não está logado. 
+      Vocï¿½ nï¿½o estï¿½ logado. 
       <a href="<c:url value="/login"/>">Login</a>
 										<a href="<c:url value="/usuarios/novo"/>">Cadastre-se</a>
 									</c:if></li-->
@@ -77,27 +78,27 @@
 							<ul class="dropdown-menu" id="menu1">
 								<li><a href="#">Nova OP</a></li>
 								<li><a href="#">Agenda</a></li>
-								<li><a href="#">Orçamentos</a></li>
-								<li><a href="#">Faturar Orçamento</a></li>
+								<li><a href="#">Orï¿½amentos</a></li>
+								<li><a href="#">Faturar Orï¿½amento</a></li>
 								<li><a href="#">Oportunidades</a></li>
 								<li><a href="#">Novo Contrato</a></li>
 								<li class="divider"></li>
-								<li><a href="#">Clientes</a></li>
+								<li><a href="<c:url value="/clientes"/>">Clientes</a></li>
 								<li><a href="#">Contas Bancarias</a></li>
-								<li><a href="#">Fornecedores</a></li>
+								<li><a href="<c:url value="/fornecedores"/>">Fornecedores</a></li>
 								<li><a href="<c:url value="/produtos"/>">Produtos </a></li>
-								<li><a href="#">Parceiros</a></li>
-								<li><a href="#">Serviços</a></li>
+								<li><a href="<c:url value="/parceiros"/>">Parceiros</a></li>
+								<li><a href="#">Serviï¿½os</a></li>
 								<li><a href="#">Transportadoras</a></li>
-								<li><a href="#">Acabamentos/Acessórios</a></li>
+								<li><a href="#">Acabamentos/Acessï¿½rios</a></li>
 							</ul></li>
 
 						<li class=""><a href="#">Compras</a></li>
 						<li class=""><a href="#">Financeiro</a></li>
-						<li class=""><a href="#">Produção</a></li>
-						<li class=""><a href="#">Ord. Serviço</a></li>
+						<li class=""><a href="#">Produï¿½ï¿½o</a></li>
+						<li class=""><a href="#">Ord. Serviï¿½o</a></li>
 						<li class=""><a href="#">Fiscal</a></li>
-						<li class=""><a href="#">Relatórios</a></li>
+						<li class=""><a href="#">Relatï¿½rios</a></li>
 						<li class="has-sub"><a href="#">Conf. Sistema</a>
 							
 							
@@ -126,11 +127,11 @@
 								<li><strong>Financeiro</strong>
 									<ul>
 										<li><a href="#">Dados da empresa</a></li>
-										<li><a href="#">Cargos funções</a></li>
+										<li><a href="#">Cargos funï¿½ï¿½es</a></li>
 										<li><a href="#">Tipo do cliente</a></li>
 										<li><strong><a href="#">Cidade/Estado</a></strong></li>
-										<li><a href="#">Grupos de Usuário</a></li>
-										<li><a href="#">Usuários</a></li>
+										<li><a href="#">Grupos de Usuï¿½rio</a></li>
+										<li><a href="#">Usuï¿½rios</a></li>
 									</ul></li>
 								<li><strong>Financeiro</strong>
 									<ul>
@@ -141,10 +142,10 @@
 										<li><a href="#">Centro de Custo</a></li>
 										<li><a href="#">Meios de Pagamentos</a></li>
 									</ul></li>
-								<li><strong>Produtos/Serviços</strong>
+								<li><strong>Produtos/Serviï¿½os</strong>
 									<ul>
 										<li><a href="#">Grupo de Produtos</a></li>
-										<li><a href="#">Grupo de Serviços</a></li>
+										<li><a href="#">Grupo de Serviï¿½os</a></li>
 										<li><a href="#">Contratos</a></li>
 										<li><a href="#">Unidade de Medida</a></li>
 										<li><a href="#">Meios de Pagamentos</a></li>

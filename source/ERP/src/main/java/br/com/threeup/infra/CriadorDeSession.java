@@ -3,15 +3,15 @@
  */
 package br.com.threeup.infra;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-
-
-import br.com.caelum.vraptor.ioc.Component;
-import br.com.caelum.vraptor.ioc.ComponentFactory;
 
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+
+import br.com.caelum.vraptor.ioc.Component;
+import br.com.caelum.vraptor.ioc.ComponentFactory;
 
 
 /**
@@ -19,27 +19,37 @@ import javax.annotation.PreDestroy;
  * 
  */
 @Component
-public class CriadorDeSession implements ComponentFactory<Session> {
+@SuppressWarnings( "restriction" )
+public class CriadorDeSession implements ComponentFactory< Session > {
 
-	private final SessionFactory factory;
-	private Session session;
+    private final SessionFactory factory;
 
-	public CriadorDeSession(SessionFactory factory) {
-		this.factory = factory;
-	}
+    private Session session;
 
-	public Session getInstance() {
-		return session;
-	}
 
-	@PostConstruct
-	public void abre() {
-		session = factory.openSession();
-	}
+    public CriadorDeSession( SessionFactory factory ) {
 
-	@PreDestroy
-	public void fecha() {
-		session.close();
-	}
+        this.factory = factory;
+    }
+
+
+    public Session getInstance() {
+
+        return session;
+    }
+
+
+    @PostConstruct
+    public void abre() {
+
+        session = factory.openSession();
+    }
+
+
+    @PreDestroy
+    public void fecha() {
+
+        session.close();
+    }
 
 }

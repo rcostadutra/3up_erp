@@ -14,8 +14,8 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.threeup.dao.ProdutoDao;
-import br.com.threeup.model.Produto;
+import br.com.threeup.dao.ClienteDao;
+import br.com.threeup.model.Cliente;
 
 
 /**
@@ -23,14 +23,14 @@ import br.com.threeup.model.Produto;
  * 
  */
 @Resource
-public class ProdutosController {
+public class ClientesController {
 
-    private final ProdutoDao dao;
+    private final ClienteDao dao;
 
     private final Result result;
 
 
-    public ProdutosController( ProdutoDao dao, Result result ) {
+    public ClientesController( ClienteDao dao, Result result ) {
 
         this.dao = dao;
         this.result = result;
@@ -38,24 +38,24 @@ public class ProdutosController {
     }
 
 
-    @Get( "/produtos" )
-    public List< Produto > lista() {
+    @Get( "/clientes" )
+    public List< Cliente > lista() {
 
         return dao.listaTudo();
     }
 
 
-    public List< Produto > busca( String nome ) {
+    public List< Cliente > busca( String nome ) {
 
         result.include( "nome", nome );
         return dao.busca( nome );
     }
 
 
-    @Post( "/produtos" )
-    public void adiciona( Produto produto ) {
+    @Post( "/clientes" )
+    public void adiciona( Cliente cliente ) {
 
-        dao.salva( produto );
+        dao.salva( cliente );
 
         // redirect forma 1
         // result.redirectTo(ProdutosController.class).lista();
@@ -65,40 +65,40 @@ public class ProdutosController {
     }
 
 
-    @Get( "/produtos/novo" )
+    @Get( "/clientes/novo" )
     public void formulario() {
 
     }
 
 
-    @Get( "/produtos/{id}" )
-    public Produto edita( Long id ) {
+    @Get( "/clientes/{id}" )
+    public Cliente edita( Long id ) {
 
         return dao.carrega( id );
 
     }
 
 
-    @Put( "/produtos/{produto.id}" )
-    public void altera( Produto produto ) {
+    @Put( "/clientes/{cliente.id}" )
+    public void altera( Cliente cliente ) {
 
-        dao.atualiza( produto );
+        dao.atualiza( cliente );
         result.redirectTo( this ).lista();
     }
 
 
-    @Delete( "/produtos/{id}" )
+    @Delete( "/clientes/{id}" )
     public void remove( Long id ) {
 
-        Produto produto = dao.carrega( id );
-        dao.remove( produto );
+        Cliente cliente = dao.carrega( id );
+        dao.remove( cliente );
         result.redirectTo( this ).lista();
     }
 
 
-    @Get( "/produtos/busca.json" )
+    @Get( "/clientes/busca.json" )
     public void buscaJson( String q ) {
 
-        result.use( json() ).withoutRoot().from( dao.busca( q ) ).exclude( "id", "descricao" ).serialize();
+        result.use( json() ).withoutRoot().from( dao.busca( q ) ).exclude( "id", "nome" ).serialize();
     }
 }

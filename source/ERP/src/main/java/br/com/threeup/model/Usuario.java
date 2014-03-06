@@ -3,8 +3,10 @@
  */
 package br.com.threeup.model;
 
+
 import javax.persistence.Entity;
 import javax.persistence.Id;
+
 
 /**
  * @author rcostadu
@@ -13,33 +15,47 @@ import javax.persistence.Id;
 @Entity
 public class Usuario {
 
-	@Id
-	private String login;
-	private String senha;
-	private String nome;
+    @Id
+    private String login;
 
-	public String getLogin() {
-		return login;
-	}
+    private String senha;
 
-	public void setLogin(String login) {
-		this.login = login;
-	}
+    private String nome;
 
-	public String getSenha() {
-		return senha;
-	}
 
-	public void setSenha(String senha) {
-		this.senha = senha;
-	}
+    public String getLogin() {
 
-	public String getNome() {
-		return nome;
-	}
+        return login;
+    }
 
-	public void setNome(String nome) {
-		this.nome = nome;
-	}
+
+    public void setLogin( String login ) {
+
+        this.login = login;
+    }
+
+
+    public String getSenha() {
+
+        return senha;
+    }
+
+
+    public void setSenha( String senha ) {
+
+        this.senha = senha;
+    }
+
+
+    public String getNome() {
+
+        return nome;
+    }
+
+
+    public void setNome( String nome ) {
+
+        this.nome = nome;
+    }
 
 }
