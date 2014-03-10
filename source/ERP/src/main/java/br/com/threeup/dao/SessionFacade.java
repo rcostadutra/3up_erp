@@ -7,10 +7,9 @@ package br.com.threeup.dao;
 import java.io.Serializable;
 import java.util.List;
 
+import org.dom4j.tree.AbstractEntity;
 import org.hibernate.Session;
 import org.hibernate.Transaction;
-
-import br.com.threeup.model.AbstractEntity;
 
 
 /**

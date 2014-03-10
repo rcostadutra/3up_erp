@@ -4,6 +4,8 @@
 package br.com.threeup.model;
 
 
+import java.io.Serializable;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
@@ -15,7 +17,9 @@ import javax.persistence.Id;
  */
 
 @Entity
-public class Parceiro {
+public class Parceiro implements Serializable {
+
+    private static final long serialVersionUID = 4895377792665086274L;
 
     @Id
     @GeneratedValue

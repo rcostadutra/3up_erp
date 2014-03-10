@@ -11,7 +11,7 @@ import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
 import br.com.caelum.vraptor.Validator;
 import br.com.caelum.vraptor.validator.ValidationMessage;
-import br.com.threeup.dao.UsuarioDao;
+import br.com.threeup.dao.impl.UsuarioDao;
 import br.com.threeup.model.Usuario;
 import br.com.threeup.model.UsuarioWeb;
 
@@ -49,7 +49,7 @@ public class UsuariosController {
         }
         validator.onErrorUsePageOf( UsuariosController.class ).novo();
 
-        dao.adiciona( usuario );
+        dao.salva( usuario );
 
         result.redirectTo( ProdutosController.class ).lista();
     }

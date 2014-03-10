@@ -14,7 +14,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.threeup.dao.FornecedorDao;
+import br.com.threeup.dao.impl.FornecedorDao;
 import br.com.threeup.model.Fornecedor;
 
 
@@ -78,7 +78,7 @@ public class FornecedoresController {
     @Put( "/fornecedores/{fornecedor.id}" )
     public void altera( Fornecedor fornecedor ) {
 
-        dao.atualiza( fornecedor );
+        dao.update( fornecedor );
         result.redirectTo( this ).lista();
     }
 

@@ -84,7 +84,7 @@
 								<li><a href="#">Novo Contrato</a></li>
 								<li class="divider"></li>
 								<li><a href="<c:url value="/clientes"/>">Clientes</a></li>
-								<li><a href="#">Contas Bancarias</a></li>
+								<li><a href="<c:url value="/contaBancarias"/>">Contas Bancarias</a></li>
 								<li><a href="<c:url value="/fornecedores"/>">Fornecedores</a></li>
 								<li><a href="<c:url value="/produtos"/>">Produtos </a></li>
 								<li><a href="<c:url value="/parceiros"/>">Parceiros</a></li>

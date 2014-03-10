@@ -14,7 +14,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.threeup.dao.ClienteDao;
+import br.com.threeup.dao.impl.ClienteDao;
 import br.com.threeup.model.Cliente;
 
 
@@ -82,7 +82,7 @@ public class ClientesController {
     @Put( "/clientes/{cliente.id}" )
     public void altera( Cliente cliente ) {
 
-        dao.atualiza( cliente );
+        dao.update( cliente );
         result.redirectTo( this ).lista();
     }
 

@@ -14,7 +14,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.threeup.dao.ParceiroDao;
+import br.com.threeup.dao.impl.ParceiroDao;
 import br.com.threeup.model.Parceiro;
 
 
@@ -78,7 +78,7 @@ public class ParceirosController {
     @Put( "/parceiros/{parceiro.id}" )
     public void altera( Parceiro parceiro ) {
 
-        dao.atualiza( parceiro );
+        dao.update( parceiro );
         result.redirectTo( this ).lista();
     }
 

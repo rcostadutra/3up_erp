@@ -14,7 +14,7 @@ import br.com.caelum.vraptor.Post;
 import br.com.caelum.vraptor.Put;
 import br.com.caelum.vraptor.Resource;
 import br.com.caelum.vraptor.Result;
-import br.com.threeup.dao.ProdutoDao;
+import br.com.threeup.dao.impl.ProdutoDao;
 import br.com.threeup.model.Produto;
 
 
@@ -56,11 +56,6 @@ public class ProdutosController {
     public void adiciona( Produto produto ) {
 
         dao.salva( produto );
-
-        // redirect forma 1
-        // result.redirectTo(ProdutosController.class).lista();
-
-        // redirect forma 2
         result.redirectTo( this ).lista();
     }
 
@@ -82,7 +77,7 @@ public class ProdutosController {
     @Put( "/produtos/{produto.id}" )
     public void altera( Produto produto ) {
 
-        dao.atualiza( produto );
+        dao.update( produto );
         result.redirectTo( this ).lista();
     }
 
