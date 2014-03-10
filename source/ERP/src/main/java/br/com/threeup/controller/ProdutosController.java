@@ -19,6 +19,9 @@ import br.com.threeup.model.Produto;
 
 
 /**
+ * Classe responsável pelas regras de manipulação dos dados do
+ * {@link ProdutoController}
+ * 
  * @author rcostadu
  * 
  */
@@ -30,6 +33,15 @@ public class ProdutosController {
     private final Result result;
 
 
+    /**
+     * Método responsável por criar uma instância das variaveis globais da
+     * classe.
+     * 
+     * @param dao
+     *            Instância {@link ProdutoDao}
+     * @param result
+     *            Instância {@link Result}
+     */
     public ProdutosController( ProdutoDao dao, Result result ) {
 
         this.dao = dao;
@@ -38,6 +50,11 @@ public class ProdutosController {
     }
 
 
+    /**
+     * Método responsável por retorno todos os {@link Produto}s sem filtros.
+     * 
+     * @return Uma {@link List}<{@link Produto}>
+     */
     @Get( "/produtos" )
     public List< Produto > lista() {
 
@@ -45,6 +62,14 @@ public class ProdutosController {
     }
 
 
+    /**
+     * Método responsável por buscar os {@link Produto}s através do nome como
+     * referência.
+     * 
+     * @param nome
+     *            Paramentro {@link String} referente ao nome do {@link Produto}
+     * @return Uma {@link List}<{@link Produto}>
+     */
     public List< Produto > busca( String nome ) {
 
         result.include( "nome", nome );
@@ -52,6 +77,12 @@ public class ProdutosController {
     }
 
 
+    /**
+     * Método responsável por inserir o {@link Produto} no banco.
+     * 
+     * @param produto
+     *            Paramentro {@link Produto} que será salvo no banco.
+     */
     @Post( "/produtos" )
     public void adiciona( Produto produto ) {
 
@@ -60,12 +91,22 @@ public class ProdutosController {
     }
 
 
+    /**
+     * Método {@link Void} para controle do formulário na camada view.
+     */
     @Get( "/produtos/novo" )
     public void formulario() {
 
     }
 
 
+    /**
+     * Método responsável por buscar o {@link Produto} para alteração dos dados.
+     * 
+     * @param id
+     *            Código do {@link Produto} para busca.
+     * @return Uma instância de {@link Produto}
+     */
     @Get( "/produtos/{id}" )
     public Produto edita( Long id ) {
 
@@ -74,6 +115,12 @@ public class ProdutosController {
     }
 
 
+    /**
+     * Método responsável por alterar os dados {@link Produto}
+     * 
+     * @param produto
+     *            Parametro {@link Produto} que será alterado no banco de dados.
+     */
     @Put( "/produtos/{produto.id}" )
     public void altera( Produto produto ) {
 
@@ -82,6 +129,12 @@ public class ProdutosController {
     }
 
 
+    /**
+     * Método responsável por remover o {@link Produto} atráves do código.
+     * 
+     * @param id
+     *            Código do {@link Produto} para exclusão
+     */
     @Delete( "/produtos/{id}" )
     public void remove( Long id ) {
 
@@ -91,9 +144,16 @@ public class ProdutosController {
     }
 
 
+    /**
+     * Método responsável por buscar informações do contaBancaria para
+     * {@link Result} de retorno da classe.
+     * 
+     * @param parameter
+     *            Parametro de entrada da busca em {@link String}
+     */
     @Get( "/produtos/busca.json" )
-    public void buscaJson( String q ) {
+    public void buscaJson( String parameter ) {
 
-        result.use( json() ).withoutRoot().from( dao.busca( q ) ).exclude( "id", "descricao" ).serialize();
+        result.use( json() ).withoutRoot().from( dao.busca( parameter ) ).exclude( "id", "descricao" ).serialize();
     }
 }

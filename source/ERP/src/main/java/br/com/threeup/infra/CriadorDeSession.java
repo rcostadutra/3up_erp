@@ -19,7 +19,6 @@ import br.com.caelum.vraptor.ioc.ComponentFactory;
  * 
  */
 @Component
-@SuppressWarnings( "restriction" )
 public class CriadorDeSession implements ComponentFactory< Session > {
 
     private final SessionFactory factory;

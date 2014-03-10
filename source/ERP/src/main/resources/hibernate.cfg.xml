@@ -31,6 +31,7 @@
 		<mapping class="br.com.threeup.model.Parceiro" />
 		<mapping class="br.com.threeup.model.Fornecedor" />
 		<mapping class="br.com.threeup.model.ContaBancaria" />
-				
+		<mapping class="br.com.threeup.model.Transportadora" />
+						
 	</session-factory>
 </hibernate-configuration>

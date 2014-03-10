@@ -21,7 +21,6 @@ import br.com.caelum.vraptor.ioc.ComponentFactory;
  */
 @Component
 @ApplicationScoped
-@SuppressWarnings( "restriction" )
 public class CriadorDeSessionFactory implements ComponentFactory< SessionFactory > {
 
     private SessionFactory factory;

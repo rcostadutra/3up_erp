@@ -89,7 +89,7 @@
 								<li><a href="<c:url value="/produtos"/>">Produtos </a></li>
 								<li><a href="<c:url value="/parceiros"/>">Parceiros</a></li>
 								<li><a href="#">Servi�os</a></li>
-								<li><a href="#">Transportadoras</a></li>
+								<li><a href="<c:url value="/transportadoras"/>">Transportadoras</a></li>
 								<li><a href="#">Acabamentos/Acess�rios</a></li>
 							</ul></li>
 

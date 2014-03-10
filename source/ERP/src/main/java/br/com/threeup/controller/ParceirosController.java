@@ -19,6 +19,9 @@ import br.com.threeup.model.Parceiro;
 
 
 /**
+ * Classe responsável pelas regras de manipulação dos dados do
+ * {@link ParceiroController}
+ * 
  * @author rcostadu
  * 
  */
@@ -30,6 +33,15 @@ public class ParceirosController {
     private final Result result;
 
 
+    /**
+     * Método responsável por criar uma instância das variaveis globais da
+     * classe.
+     * 
+     * @param dao
+     *            Instância {@link ParceiroDao}
+     * @param result
+     *            Instância {@link Result}
+     */
     public ParceirosController( ParceiroDao dao, Result result ) {
 
         this.dao = dao;
@@ -38,6 +50,11 @@ public class ParceirosController {
     }
 
 
+    /**
+     * Método responsável por retorno todos os {@link Parceiro}s sem filtros.
+     * 
+     * @return Uma {@link List}<{@link Parceiro}>
+     */
     @Get( "/parceiros" )
     public List< Parceiro > lista() {
 
@@ -45,6 +62,15 @@ public class ParceirosController {
     }
 
 
+    /**
+     * Método responsável por buscar os {@link Parceiro}s através do nome como
+     * referência.
+     * 
+     * @param nome
+     *            Paramentro {@link String} referente ao nome do
+     *            {@link Parceiro}
+     * @return Uma {@link List}<{@link Parceiro}>
+     */
     public List< Parceiro > busca( String nome ) {
 
         result.include( "nome", nome );
@@ -52,6 +78,12 @@ public class ParceirosController {
     }
 
 
+    /**
+     * Método responsável por inserir o {@link Parceiro} no banco.
+     * 
+     * @param parceiro
+     *            Paramentro {@link Parceiro} que será salvo no banco.
+     */
     @Post( "/parceiros" )
     public void adiciona( Parceiro parceiro ) {
 
@@ -61,12 +93,23 @@ public class ParceirosController {
     }
 
 
+    /**
+     * Método {@link Void} para controle do formulário na camada view.
+     */
     @Get( "/parceiros/novo" )
     public void formulario() {
 
     }
 
 
+    /**
+     * Método responsável por buscar o {@link Parceiro} para alteração dos
+     * dados.
+     * 
+     * @param id
+     *            Código do {@link Parceiro} para busca.
+     * @return Uma instância de {@link Parceiro}
+     */
     @Get( "/parceiros/{id}" )
     public Parceiro edita( Long id ) {
 
@@ -75,6 +118,13 @@ public class ParceirosController {
     }
 
 
+    /**
+     * Método responsável por alterar os dados {@link Parceiro}
+     * 
+     * @param parceiro
+     *            Parametro {@link Parceiro} que será alterado no banco de
+     *            dados.
+     */
     @Put( "/parceiros/{parceiro.id}" )
     public void altera( Parceiro parceiro ) {
 
@@ -83,6 +133,12 @@ public class ParceirosController {
     }
 
 
+    /**
+     * Método responsável por remover o {@link Parceiro} atráves do código.
+     * 
+     * @param id
+     *            Código do {@link Parceiro} para exclusão
+     */
     @Delete( "/parceiros/{id}" )
     public void remove( Long id ) {
 
@@ -92,9 +148,16 @@ public class ParceirosController {
     }
 
 
+    /**
+     * Método responsável por buscar informações do contaBancaria para
+     * {@link Result} de retorno da classe.
+     * 
+     * @param parameter
+     *            Parametro de entrada da busca em {@link String}
+     */
     @Get( "/parceiros/busca.json" )
-    public void buscaJson( String q ) {
+    public void buscaJson( String parameter ) {
 
-        result.use( json() ).withoutRoot().from( dao.busca( q ) ).exclude( "id", "nome" ).serialize();
+        result.use( json() ).withoutRoot().from( dao.busca( parameter ) ).exclude( "id", "nome" ).serialize();
     }
 }

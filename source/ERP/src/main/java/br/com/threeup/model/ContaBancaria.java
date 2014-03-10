@@ -13,6 +13,8 @@ import javax.persistence.Id;
 
 
 /**
+ * Classe que representa o dominio Conta Bancária no banco de dados.
+ * 
  * @author Thiago
  * 
  */

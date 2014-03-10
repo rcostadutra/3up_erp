@@ -64,15 +64,15 @@ public class ContaBancariasController {
      * Método responsável por buscar os {@link ContaBancaria}s através do nome
      * como referência.
      * 
-     * @param nome
+     * @param mnemonico
      *            Paramentro {@link String} referente ao nome do
      *            {@link ContaBancaria}
      * @return Uma {@link List}<{@link ContaBancaria}>
      */
-    public List< ContaBancaria > busca( String nome ) {
+    public List< ContaBancaria > busca( String mnemonico ) {
 
-        result.include( "nome", nome );
-        return dao.busca( nome );
+        result.include( "mnemonico", mnemonico );
+        return dao.busca( mnemonico );
     }
 
 
